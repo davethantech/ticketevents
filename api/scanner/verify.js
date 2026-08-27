@@ -16,13 +16,14 @@ export default async function handler(req, res) {
   const { event_id: eventId, signature } = req.body || {};
   if (!eventId || !signature) return res.status(400).json({ error: "event_id and signature are required" });
 
-  const { data: membership, error: membershipError } = await admin
-    .from("organization_members")
-    .select("role,status,organization_id,events!inner(id)")
+  const { data: event, error: eventError } = await admin.from("events").select("id,organization_id").eq("id", eventId).single();
+  if (eventError || !event) return res.status(404).json({ error: "Event not found" });
+  const { data: membership, error: membershipError } = await admin.from("organization_members")
+    .select("role,status")
+    .eq("organization_id", event.organization_id)
     .eq("user_id", authData.user.id)
     .eq("status", "active")
     .in("role", ["owner", "admin", "staff", "scanner"])
-    .eq("events.id", eventId)
     .maybeSingle();
   if (membershipError || !membership) return res.status(403).json({ error: "You are not assigned to this event" });
 
