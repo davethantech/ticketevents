@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
-import EntriaLanding, { StaffLogin } from "./views/EntriaLanding";
+import EntriaPublic from "./views/EntriaPublic";
+import { StaffLogin } from "./views/EntriaLanding";
 import { restoreStaffSession } from "./lib/auth";
 
 const hasPreviewSession = () => sessionStorage.getItem("entria:staff-session") === "preview-authenticated";
@@ -27,9 +28,9 @@ function Root() {
 
   if (booting && !isPublicGuestRoute) return <div className="flex min-h-screen items-center justify-center bg-[#070907] text-white"><div className="text-center"><div className="font-display text-2xl font-black tracking-[.2em]">ENTRIA</div><div className="mt-2 text-[9px] uppercase tracking-[.25em] text-white/30">Securing staff workspace</div></div></div>;
 
-  if (isRoot && !staff) return <EntriaLanding onCreateEvent={() => { window.location.hash = "/staff/login"; }} onExplore={() => { document.getElementById("how")?.scrollIntoView({ behavior: "smooth" }); }} />;
+  if (isRoot && !staff) return <EntriaPublic />;
 
-  if (isStaffLogin && !staff) return <StaffLogin onBack={() => { window.location.hash = "/"; }} onSuccess={() => { setStaff(true); window.location.hash = "/"; }} />;
+  if (isStaffLogin && !staff) return <StaffLogin onBack={() => { window.location.hash = "/"; }} onSuccess={() => { setStaff(true); window.location.hash = "/dashboard"; }} />;
 
   if (isPublicGuestRoute) return <App />;
 
